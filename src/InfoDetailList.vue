@@ -3,25 +3,24 @@
 </script>
 
 <template>
-<div class="selectedFacilities">
-    <h3>選択した都道府県内の施設</h3>
-    <div id="facility-list"></div>
-</div>
+    <div class="resultContainer">
+        <div class="list-title"><h3>選択した都道府県内の施設</h3></div>
+        <div class="facility-list"></div>
+    </div>
 </template>
 
 <style scoped>
-.selectedFacilities {
-    flex: 0 1 35%;
-    height: 720px;
-    width: 35%;
+.resultContainer {
+    height: 100%;
+    flex-direction: column;
 }
 
 h3 {
-    margin: 10px 0px
+    margin-bottom: 10px;
 }
 
-#facility-list {
-    max-height: 640px;
+.facility-list {
+    flex-grow: 1;
     overflow-y: auto;
     padding: 10px;
 }

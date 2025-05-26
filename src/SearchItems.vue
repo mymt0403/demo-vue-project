@@ -95,7 +95,7 @@ function handleLocationError() {
 </script>
 
 <template>
-    <div class="container">
+    <div class="selectContainer">
         <select id="mySelect">
             <option value="40">福岡県</option>
             <option value="41">佐賀県</option>
@@ -115,12 +115,13 @@ function handleLocationError() {
 </template>
 
 <style>
-.container {
+.selectContainer {
     gap: 10px;
     width: 100%;
     max-width: 960px;
     display: flex;
     align-items: left;
+    margin-bottom: 1em;
 }
 
 #mySelect {
