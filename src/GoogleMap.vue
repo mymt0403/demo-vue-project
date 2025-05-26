@@ -1,0 +1,11 @@
+<script setup>
+
+</script>
+
+<template>
+    <div id="map" style="height: 100%; width: 100%;"></div>
+</template>
+
+<style scoped>
+
+</style>
