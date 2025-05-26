@@ -1,30 +1,39 @@
-<script>
-function fetchData() {
-    /** mySelectの項目(value)を取得する */
-    const selectBox = document.getElementById('mySelect');
-    const selectedValue = selectBox.value;
+<script setup>
+import { ref, defineEmits } from 'vue';
+import axios from 'axios';
 
-    fetch(`/api/center/\${selectedValue}`)
-        .then(response => response.json())
-        .then(data =>
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: {
-                    lat: data.latitude,
-                    lng: data.longitude,
-                },
-                zoom: 9,
-                mapId: "4504f8b37365c3d0",
-            })
-        );
+let map
+const emit = defineEmits([`sendData`])
+const selectedValue = ref('40')
+const cLat = ref()
+const cLong = ref()
 
-    fetch(`/api/data/\${selectedValue}`)
-        .then(response => response.json())
-        .then(data => putPins(data));
+async function fetchCenter() {
+    console.log(selectedValue.value)
+    await axios.get(`http://localhost:8080/api/center/${selectedValue.value}`)
+        .then(
+            function (response) {
+                map = new google.maps.Map(document.getElementById("map"), {
+                    center: {
+                        lat: response.data.latitude,
+                        lng: response.data.longitude,
+                    },
+                    zoom: 9,
+                    mapId: "4504f8b37365c3d0",
+                })
+            }
+        )
+
+    await axios.get(`http://localhost:8080/api/data/${selectedValue.value}`)
+        .then(
+            function (response) {
+                putPins(response.data)
+            }
+        )
 }
 
 async function putPins(pins) {
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-    const { PinElement } = google.maps.importLibrary("marker");
     pins.forEach((pin, i) => {
         new AdvancedMarkerElement({
             map: map,
@@ -33,14 +42,15 @@ async function putPins(pins) {
                 lng: pin.longitude,
             },
             title: pin.facilityName,
-            content: new PinElement({
-                glyph: `\${i + 1}`,
+            content: new google.maps.marker.PinElement({
+                glyph: `${i + 1}`,
                 glyphColor: "white",
                 scale: 1,
             }).element,
         });
     });
-    displayFacilities(pins);
+    emit(`sendData`, pins)
+    // displayFacilities(pins);
 }
 
 function showUserLocation() {
@@ -85,6 +95,48 @@ function showUserLocation() {
     }
 }
 
+// function displayFacilities(facilities) {
+//     const listContainer = document.getElementById("facility-list");
+//     listContainer.innerHTML = '';
+
+//     if (!Array.isArray(facilities) || facilities.length === 0) {
+//         listContainer.textContent = '※対象の施設は見つかりませんでした。';
+//         return;
+//     }
+
+//     facilities.forEach((facility, i) => {
+//         const div = document.createElement('div');
+//         const name = document.createElement('div');
+//         const hr = document.createElement('hr');
+//         const addressDiv = document.createElement('div');
+//         const position = document.createElement('div');
+//         const mapLink = document.createElement('a');
+
+//         const addressText = document.createTextNode(`住所: ${facility.address}（`);
+//         const closingParen = document.createTextNode('）');
+
+//         name.textContent = `${i + 1}. ${facility.facilityName} (${facility.garbageTypeName})`;
+//         name.className = 'facility-name';
+//         position.textContent = `緯度: ${facility.latitude}, 経度: ${facility.longitude}`;
+//         mapLink.href = `${facility.mapUrl}`;
+//         mapLink.textContent = `GoogleMapで見る`
+//         mapLink.target = '_blank';
+
+//         // 住所表示
+//         addressDiv.appendChild(addressText);
+//         addressDiv.appendChild(mapLink);
+//         addressDiv.appendChild(closingParen);
+
+//         // リスト表示
+//         div.appendChild(name);
+//         div.appendChild(addressDiv);
+//         div.appendChild(position);
+//         div.appendChild(addressDiv);
+//         div.appendChild(hr);
+//         listContainer.appendChild(div);
+//     });
+// }
+
 function handleLocationError() {
     const errorMessageElement = document.getElementById("errorMessage");
     errorMessageElement.innerHTML = `
@@ -96,7 +148,7 @@ function handleLocationError() {
 
 <template>
     <div class="selectContainer">
-        <select id="mySelect">
+        <select id="mySelect" v-model="selectedValue">
             <option value="40">福岡県</option>
             <option value="41">佐賀県</option>
             <option value="42">長崎県</option>
@@ -106,8 +158,9 @@ function handleLocationError() {
             <option value="46">鹿児島県</option>
             <option value="47">沖縄県</option>
         </select>
-        <button class="button1" @click="fetchData">search</button>
+        <button class="button1" @click="fetchCenter">search</button>
         <button class="button2" @click="showUserLocation">display your location</button>
+        <p>selected: {{ selectedValue }}</p>
     </div>
     <div class="error" style="vertical-align: top;">
         <span id="errorMessage" class="error-message"></span>
