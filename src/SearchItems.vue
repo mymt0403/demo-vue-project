@@ -3,14 +3,19 @@ import { ref, defineEmits, onMounted } from 'vue';
 import axios from 'axios';
 
 let map
+const tokyoLat = parseFloat(import.meta.env.VITE_DEFAULT_TOKYO_LAT)
+const tokyoLng = parseFloat(import.meta.env.VITE_DEFAULT_TOKYO_LNG)
 const emit = defineEmits([`sendData`])
 const selectedValue = ref('40')
 
 async function fetchCenter() {
+    const { Map } = await window.google.maps.importLibrary('maps');
+
+    /** 中央座標を取得し、マップを表示する */
     await axios.get(`http://localhost:8080/api/center/${selectedValue.value}`)
         .then(
             function (response) {
-                map = new google.maps.Map(document.getElementById("map"), {
+                map = new Map(document.getElementById("map"), {
                     center: {
                         lat: response.data.latitude,
                         lng: response.data.longitude,
@@ -21,6 +26,7 @@ async function fetchCenter() {
             }
         )
 
+        /** 選択した都道府県の施設情報を取得し、マップ上にピンを指す */
     await axios.get(`http://localhost:8080/api/data/${selectedValue.value}`)
         .then(
             function (response) {

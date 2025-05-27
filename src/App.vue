@@ -1,18 +1,8 @@
 <script setup>
 import SearchItems from './SearchItems.vue'
 import InfoDetailList from './InfoDetailList.vue'
-import { ref, onMounted } from 'vue';
-const tokyoLat = parseFloat(import.meta.env.VITE_DEFAULT_TOKYO_LAT)
-const tokyoLng = parseFloat(import.meta.env.VITE_DEFAULT_TOKYO_LNG)
+import { ref } from 'vue';
 const handleFacilitiesData = ref([])
-
-onMounted(async () => {
-  const { Map } = await window.google.maps.importLibrary('maps');
-  const map = new Map(document.getElementById('map'), {
-    center: { lat: tokyoLat, lng: tokyoLng },
-    zoom: 15
-  });
-});
 
 /** 親コンポーネント経由でデータを渡す */
 function handleData(payload) {
