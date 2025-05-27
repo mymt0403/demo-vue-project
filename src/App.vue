@@ -2,17 +2,19 @@
 import SearchItems from './SearchItems.vue'
 import InfoDetailList from './InfoDetailList.vue'
 import { ref, onMounted } from 'vue';
+const tokyoLat = parseFloat(import.meta.env.VITE_DEFAULT_TOKYO_LAT)
+const tokyoLng = parseFloat(import.meta.env.VITE_DEFAULT_TOKYO_LNG)
 const handleFacilitiesData = ref([])
 
 onMounted(async () => {
   const { Map } = await window.google.maps.importLibrary('maps');
-
   const map = new Map(document.getElementById('map'), {
-    center: { lat: 35.681236, lng: 139.767125 },
+    center: { lat: tokyoLat, lng: tokyoLng },
     zoom: 15
   });
 });
 
+/** 親コンポーネント経由でデータを渡す */
 function handleData(payload) {
   handleFacilitiesData.value = payload
 }
@@ -30,6 +32,10 @@ function handleData(payload) {
 </template>
 
 <style>
+h1 {
+  margin-bottom: 10px;
+}
+
 .container {
   display: flex;
   width: 100%;
@@ -45,5 +51,6 @@ function handleData(payload) {
   flex: 0 1 35%;
   height: 100%;
   padding: 10px;
+  overflow: hidden;
 }
 </style>

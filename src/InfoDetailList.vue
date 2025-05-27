@@ -15,10 +15,7 @@ const props = defineProps({
             <div v-if="!facilities.length">※対象の施設は見つかりませんでした。</div>
             <div v-for="(facility, i) in facilities" :key="i" class="facility-item">
                 <div class="facility-name">{{ i + 1 }}. {{ facility.facilityName }} ({{ facility.garbageTypeName }})</div>
-                <div>
-                住所: {{ facility.address }}（
-                <a :href="facility.mapUrl" target="_blank">GoogleMapで見る</a>）
-                </div>
+                <div>住所: {{ facility.address }}（<a :href="facility.mapUrl" target="_blank">GoogleMapで見る</a>）</div>
                 <div>緯度: {{ facility.latitude }}, 経度: {{ facility.longitude }}</div>
                 <hr />
             </div>
@@ -40,5 +37,12 @@ h3 {
     flex-grow: 1;
     overflow-y: auto;
     padding: 10px;
+    height: 100%;
+}
+
+.facility-name {
+    font-weight: bold;
+    color: #d60000;
+    font-size: 1.2em;
 }
 </style>
