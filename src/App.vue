@@ -24,6 +24,7 @@ function handleData(payload) {
 <style>
 h1 {
   margin-bottom: 10px;
+  font-weight: bold;
 }
 
 .container {
@@ -40,7 +41,8 @@ h1 {
 .selectedFacilities {
   flex: 0 1 35%;
   height: 100%;
-  padding: 10px;
-  overflow: hidden;
+  padding: 0 10px;
+  overflow: visible; /* hidden を解除 */
+  box-sizing: border-box;
 }
 </style>
