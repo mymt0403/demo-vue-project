@@ -1,47 +1,48 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import SearchItems from './SearchItems.vue'
+import InfoDetailList from './InfoDetailList.vue'
+import { ref } from 'vue';
+const handleFacilitiesData = ref([])
+
+/** 親コンポーネント経由でデータを渡す */
+function handleData(payload) {
+  handleFacilitiesData.value = payload
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+<div><h1>粗大ごみ持込可能施設 一覧</h1></div>
+<SearchItems @sendData="handleData"/>
+<div class="container">
+    <div class="googleMap" id="map"></div>
+    <div class="selectedFacilities">
+      <InfoDetailList :facilities="handleFacilitiesData"/>
     </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+</div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
+<style>
+h1 {
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.container {
+  display: flex;
+  width: 100%;
+  height: 600px;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+.googleMap {
+  height: 100%;
+  width: 65%;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.selectedFacilities {
+  flex: 0 1 35%;
+  height: 100%;
+  padding: 0 10px;
+  overflow: visible; /* hidden を解除 */
+  box-sizing: border-box;
 }
 </style>

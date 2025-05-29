@@ -3,11 +3,75 @@
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      integrity="sha512-HASH..."
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
+    <title>粗大ごみ持込可能施設 一覧</title>
   </head>
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
+    <!-- Google Maps API 読み込みスクリプト -->
+  <script>
+    (g => {
+      const PARAM_LIBRARIES = "libraries";
+      const PARAM_CALLBACK = "callback";
+      const CALLBACK_NAME = "__ib__";
+      const API_NAME = "The Google Maps JavaScript API";
+      const GLOBAL_NAME = "google";
+      const IMPORT_LIBRARY = "importLibrary";
+
+      let scriptLoadedPromise, scriptElement, paramKey, paramValue;
+      const documentElement = document;
+      const globalObject = window;
+
+      globalObject[GLOBAL_NAME] = globalObject[GLOBAL_NAME] || {};
+      const googleMaps = globalObject[GLOBAL_NAME].maps = globalObject[GLOBAL_NAME].maps || {};
+      const libraries = new Set();
+      const urlParams = new URLSearchParams();
+
+      const loadScript = () => {
+        if (scriptLoadedPromise) return scriptLoadedPromise;
+        scriptLoadedPromise = new Promise(async (resolve, reject) => {
+          scriptElement = documentElement.createElement("script");
+          urlParams.set(PARAM_LIBRARIES, [...libraries].join(","));
+          for (paramKey in g) {
+            paramValue = g[paramKey];
+            urlParams.set(
+              paramKey.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()),
+              paramValue
+            );
+          }
+          urlParams.set(PARAM_CALLBACK, `${GLOBAL_NAME}.maps.${CALLBACK_NAME}`);
+          scriptElement.src = `https://maps.${GLOBAL_NAME}apis.com/maps/api/js?` + urlParams;
+          scriptElement.nonce = documentElement.querySelector("script[nonce]")?.nonce || "";
+          googleMaps[CALLBACK_NAME] = resolve;
+          scriptElement.onerror = () => {
+            scriptLoadedPromise = null;
+            reject(new Error(`${API_NAME} could not load.`));
+          };
+          documentElement.head.append(scriptElement);
+        });
+        return scriptLoadedPromise;
+      };
+
+      if (googleMaps[IMPORT_LIBRARY]) {
+        console.warn(`${API_NAME} only loads once. Ignoring:`, g);
+      } else {
+        googleMaps[IMPORT_LIBRARY] = (libraryName, ...args) => {
+          libraries.add(libraryName);
+          return loadScript().then(() => googleMaps[IMPORT_LIBRARY](libraryName, ...args));
+        };
+      }
+    })({
+      key: "%VITE_GOOGLE_MAPS_API_KEY%",
+      v: "weekly"
+    });
+  </script>
   </body>
 </html>
