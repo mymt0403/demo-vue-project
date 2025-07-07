@@ -1,6 +1,7 @@
 <script setup>
 import { ref, defineEmits, onMounted } from 'vue';
 import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_FETCH_CENTER_URL;
 
 let map, userLocationMarker
 const emit = defineEmits([`sendData`])
@@ -33,28 +34,26 @@ async function fetchFacilitiesInfo() {
     const { Map } = await window.google.maps.importLibrary('maps');
 
     /** 中央座標を取得し、マップを表示する */
-    await axios.get(`http://localhost:8080/api/center/${selectedValue.value}`)
-        .then(
-            function (response) {
-                if(!userPosition.lat && !userPosition.lng) {
-                    userPosition.lat = response.data.latitude
-                    userPosition.lng = response.data.longitude
-                }
-
-                map = new Map(document.getElementById("map"), {
-                    center: {
-                        lat: response.data.latitude,
-                        lng: response.data.longitude,
-                    },
-                    zoom: 9,
-                    mapId: "4504f8b37365c3d0",
-                })
+    await axios.get(`${API_BASE_URL}/api/center/${selectedValue.value}`)
+        .then(function (response) {
+            if (!userPosition.lat && !userPosition.lng) {
+                userPosition.lat = response.data.latitude;
+                userPosition.lng = response.data.longitude;
             }
-        )
+
+            map = new Map(document.getElementById("map"), {
+                center: {
+                    lat: response.data.latitude,
+                    lng: response.data.longitude,
+                },
+                zoom: 9,
+                mapId: "4504f8b37365c3d0",
+            });
+        });
 
     /** 選択した都道府県の施設情報を取得し、マップ上にピンを指す */
-    const facilitiesRes = await axios.get(`http://localhost:8080/api/data/${selectedValue.value}`)
-    return facilitiesRes.data
+    const facilitiesRes = await axios.get(`${API_BASE_URL}/api/data/${selectedValue.value}`);
+    return facilitiesRes.data;
 }
 
 async function putPins(pins) {
