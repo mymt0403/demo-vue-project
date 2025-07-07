@@ -16,6 +16,11 @@ async function init() {
     emit(`sendData`, facilities)
 }
 
+function change() {
+    userPosition.lat = ""
+    userPosition.lng = ""
+}
+
 async function search() {
     const facilities = await fetchFacilitiesInfo()
     await putPins(facilities)
@@ -126,6 +131,8 @@ onMounted(() => {
 })
 
 async function getRouteInfo(position, pins) {
+    if (!pins.length) return [];
+
     const payload = {
         origins: [
             {
@@ -217,7 +224,7 @@ function handleLocationError() {
 
 <template>
     <div class="selectContainer">
-        <select id="mySelect" v-model="selectedValue">
+        <select id="mySelect" v-model="selectedValue" @change="change">
             <option value="40">福岡県</option>
             <option value="41">佐賀県</option>
             <option value="42">長崎県</option>
