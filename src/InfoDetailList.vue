@@ -6,11 +6,33 @@ const props = defineProps({
         default: () => []
     }
 });
+
+function formatDuration(durationStr) {
+    if(!durationStr) return "測定不能"
+
+    const totalSeconds = parseInt(durationStr.replace('s', ''))
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const seconds = totalSeconds % 60
+
+    return `${hours}時間${minutes}分${seconds}秒`
+}
+
+function formatDistanceMeters(distanceMeters) {
+    if(!distanceMeters) return "測定不能"
+
+    const kiloMeters = distanceMeters / 1000
+    const fixed = kiloMeters.toFixed(1)
+
+    return `${fixed}km`
+}
 </script>
 
 <template>
     <div class="resultContainer">
-        <div class="list-title"><h3>選択した都道府県内の施設</h3></div>
+        <div class="list-title">
+            <h3>選択した都道府県内の施設</h3>
+        </div>
         <div class="facility-list">
             <div v-if="!facilities.length">※対象の施設は見つかりませんでした。</div>
             <div v-for="(facility, i) in facilities" :key="i" class="facility-item">
@@ -20,6 +42,7 @@ const props = defineProps({
                 </div>
                 <div>住所: {{ facility.address }}（<a :href="facility.mapUrl" target="_blank">GoogleMapで見る</a>）</div>
                 <div>緯度: {{ facility.latitude }}, 経度: {{ facility.longitude }}</div>
+                <div>所要時間: {{ formatDuration(facility.duration) }}, 走行距離: {{ formatDistanceMeters(facility.distanceMeters) }}</div>
                 <hr />
             </div>
         </div>
@@ -32,6 +55,15 @@ const props = defineProps({
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+}
+
+.list-title {
+    display: flex;
+}
+
+.display-route {
+    margin-left: 10px;
+    margin-bottom: 10px;
 }
 
 h3 {
